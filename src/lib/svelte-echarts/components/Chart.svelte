@@ -1,48 +1,47 @@
 <script lang="ts">
-  import type {
-    init as baseInit,
-    EChartsType as BaseEchartsType,
-    EChartsOption,
-    SetOptionOpts,
-  } from 'echarts'
-  import type { init as coreInit, EChartsType as CoreEchartsType } from 'echarts/core'
+  import type { EChartsType as BaseEchartsType, EChartsOption, SetOptionOpts } from 'echarts'
+  import type { EChartsType as CoreEchartsType } from 'echarts/core'
   import type { EChartsInitOpts } from 'echarts'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import { EVENT_NAMES, type EventHandlers } from '$lib/svelte-echarts/constants/events'
+  import { init } from 'echarts/core'
 
-  export let init: typeof baseInit | typeof coreInit
-  export let theme: string | object | null = 'light'
-  export let initOptions: EChartsInitOpts = {}
+  let {
+    options,
+    notMerge,
+    lazyUpdate,
+    silent,
+    replaceMerge,
+    transition,
+    onclick = $bindable(),
+  } = $props()
+  let theme: string | object | null = 'light'
+  let initOptions: EChartsInitOpts = {}
+  let propOption = $state(options)
+  console.log(propOption)
+  console.log('initOptions', options)
 
-  export let options: EChartsOption
-  export let notMerge: SetOptionOpts['notMerge'] = true // deviation from ECharts default, works better with Svelte
-  export let lazyUpdate: SetOptionOpts['lazyUpdate'] = false
-  export let silent: SetOptionOpts['silent'] = false
-  export let replaceMerge: SetOptionOpts['replaceMerge'] = undefined
-  export let transition: SetOptionOpts['transition'] = undefined
-
-  export let chart: (BaseEchartsType | CoreEchartsType) | undefined = undefined
+  let chart: (BaseEchartsType | CoreEchartsType) | undefined = undefined
 
   let element: HTMLDivElement
 
-  $: if (chart) chart.setOption(options, { notMerge, lazyUpdate, silent, replaceMerge, transition })
-
-  const dispatch = createEventDispatcher<EventHandlers>()
-
-  const initChart = () => {
+  const initChart = (options: EChartsOption) => {
+    console.log('initChart initOptions', options, initOptions)
     if (chart) chart.dispose()
 
     chart = init(element, theme, initOptions)
+    console.log('chart:', chart, element)
 
     EVENT_NAMES.forEach((eventName) => {
       // @ts-expect-error
-      chart!.on(eventName, (event) => dispatch(eventName, event))
+      chart!.on(eventName, (event) => onclick({ name: eventName, value: event }))
     })
   }
 
   onMount(() => {
+    console.log('initOptions2', options)
     const resizeObserver = new ResizeObserver(() => {
-      if (!chart) initChart()
+      if (!chart) initChart(options)
       else chart.resize()
     })
     resizeObserver.observe(element)
@@ -52,7 +51,10 @@
       chart?.dispose()
     }
   })
+
+  $effect(() => {
+    if (chart) chart.setOption(options, { notMerge, lazyUpdate, silent, replaceMerge, transition })
+  })
 </script>
 
-<!-- restProps is currently broken with typescript -->
-<div bind:this={element} style="width: 100%; height: 100%" {...$$restProps}></div>
+<div bind:this={element} style="width: 100%; height: 100%"></div>
