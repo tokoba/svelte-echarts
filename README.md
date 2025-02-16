@@ -1,3 +1,7 @@
+# Svelte 5 + svelte-echarts
+
+This project is for my learning ECharts library and Svelte 5 Runes.
+
 # svelte-echarts
 
 A simple [Apache ECharts](https://echarts.apache.org/) component for [Svelte](https://svelte.dev/)! Check out this [demo](https://bherbruck.github.io/svelte-echarts/).
@@ -10,46 +14,19 @@ npm i -D svelte-echarts echarts
 
 ## ⌨️ Usage [demo](https://bherbruck.github.io/svelte-echarts/)
 
-```html
-<script>
-  import { Chart } from 'svelte-echarts'
+Thanks to @bherbruck, we can use ECharts in svelte components.
 
-  import { init, use } from 'echarts/core'
-  import { BarChart } from 'echarts/charts'
-  import { GridComponent, TitleComponent } from 'echarts/components'
-  import { CanvasRenderer } from 'echarts/renderers'
-
-  // now with tree-shaking
-  use([BarChart, GridComponent, CanvasRenderer, TitleComponent])
-
-  let options = {
-    title: {
-      text: 'ECharts Example',
-    },
-    xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        type: 'bar',
-        data: [120, 200, 150, 80, 70, 110, 130],
-      },
-    ],
-  }
-</script>
-
-<div class="app">
-  <Chart {init} {options} />
-</div>
-
-<style>
-  .app {
-    width: 100vw;
-    height: 100vh;
-  }
-</style>
+```bash
+pnpm dev
 ```
+
+and open the development server with your browser.
+
+You can see the following bar chart of which data is updated every 1 second.
+
+![Screenshot]("./static/echart-screenshot-dark-theme.png")
+
+## disclaimer
+
+I love Svelte however I am kind of newbie in front-end devlopment, I tried to read Svelte official docs and EChart official docs, however there could be some bugs.
+If you think this code useful as reference, please contact @bherbruck - the original project owner.
