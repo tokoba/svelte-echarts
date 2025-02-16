@@ -35,5 +35,7 @@ I am a kind of newbie in front-end devlopment, I tried to read Svelte official d
 
 ## Memo
 
-1. I could not implement event handlers. Will try again.
+1. I could not implement event handlers, resize. I wiil try later.
 2. I rewrote almost all the code (+page.svelte, EChart.svelte). At first I tried to modify Chart.svelte(original one) but when I used Svelte 5 runes in Chart.svelte there were many errors and I could not solve them all.
+3. The final goal is to implement backend server (using Rust + Axum, Python + Flash, Python + FastAPI, Go + Gin etc) and asynchronously fetch the data from the server and update the charts automatically.
+   for that goal, I need to make a communication specification doc between front-end and backend-server, it would take several days.
