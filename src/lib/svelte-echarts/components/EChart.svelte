@@ -20,14 +20,14 @@
     TransformComponent,
   } from 'echarts/components'
 
-  let { options, initOptions, optionalOptions, data, onclick, onkeydown } = $props()
+  let { options, initOptions, optionalOptions, theme, data, onclick, onkeydown, debugMode } =
+    $props()
   // define the element in which echarts will draw charts
-  let elementId: string = $state('chart')
+  let elementId: string = 'chart'
   let element: HTMLDivElement | null = null
 
   // chart component created by EChart
   let chart: CoreEchartsType | undefined = undefined
-  let theme: string | object | null = 'dark'
 
   use([
     BarChart,
@@ -39,11 +39,10 @@
     TitleComponent,
   ])
 
-  const initChart = (elementId: string, initOpt: EChartsInitOpts) => {
-    element = document.getElementById(elementId) as HTMLDivElement | null // type assertion required
+  const initChart = (elemId: string, initOpt: EChartsInitOpts) => {
+    element = document.getElementById(elemId) as HTMLDivElement | null // type assertion required
     if (element && initOpt) {
       chart = init(element, theme, initOpt)
-      console.log('chart is initialized')
       chart.setOption(initOpt)
     }
   }
@@ -52,6 +51,10 @@
     initChart(elementId, initOptions)
   })
 
+  // the chart is updated with Runes update
+  // options are props which are transfered from parent component (+page.svelte).
+  // options are defined as $state() runes, so when options changes,
+  // $effect function catches the change of them and reactively run the follwoing process.
   $effect(() => {
     if (chart) {
       chart.setOption(options, optionalOptions)
@@ -61,22 +64,24 @@
 
 <div id={elementId} class="chart-area"></div>
 
-<div
-  class="chart-debug-viewer"
-  {onclick}
-  {onkeydown}
-  aria-label="interactive chart"
-  role="button"
-  tabindex="0"
->
-  <h2 class="chart-title">Chart debug viewer</h2>
-  <div>
-    Options: <pre>{JSON.stringify(options, null, 2)}</pre>
+{#if debugMode}
+  <div
+    class="chart-debug-viewer"
+    {onclick}
+    {onkeydown}
+    aria-label="interactive chart"
+    role="button"
+    tabindex="0"
+  >
+    <h2 class="chart-title">Chart debug viewer</h2>
+    <div>
+      Options: <pre>{JSON.stringify(options, null, 2)}</pre>
+    </div>
+    <div>
+      Data (first 5 items): <pre>{JSON.stringify(data.slice(0, 10), null, 2)}</pre>
+    </div>
   </div>
-  <div>
-    Data (first 5 items): <pre>{JSON.stringify(data.slice(0, 10), null, 2)}</pre>
-  </div>
-</div>
+{/if}
 
 <style>
   .chart-area {
