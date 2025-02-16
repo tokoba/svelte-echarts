@@ -24,7 +24,7 @@ and open the development server with your browser.
 
 You can see the following bar chart of which data is updated every 1 second.
 
-![Screenshot]("./static/echart-screenshot-dark-theme.png")
+![Screenshot](/static/echart-screenshot-dark-theme.png)
 
 ## disclaimer
 
